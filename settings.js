@@ -17,4 +17,16 @@ export const registerSettings = function () {
 			$('#theater-of-the-mind').toggleClass('hide-hidden', !value);
         }
 	});
+
+	game.settings.register(modulename, "show-names", {
+		name: i18n("MonksTheaterOfTheMind.show-names.name"),
+		hint: i18n("MonksTheaterOfTheMind.show-names.hint"),
+		scope: "world",
+		config: true,
+		default: false,
+		type: Boolean,
+		onChange: (value) => {
+			$('#theater-of-the-mind').toggleClass('show-names', value);
+		}
+	});
 };

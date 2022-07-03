@@ -2,7 +2,7 @@
 	"name": "monks-theater-of-the-mind",
 	"title": "Monk's Theater of the Mind",
 	"description": "For combats that don't require tokens to move on the canvas",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minimumCoreVersion": "9",
 	"compatibleCoreVersion": "9",
 	"author": "IronMonk",
@@ -28,7 +28,7 @@
 		"css/monks-theater-of-the-mind.css"
 	],
 	"url": "https://github.com/ironmonk88/monks-theater-of-the-mind",
-	"download": "https://github.com/ironmonk88/monks-theater-of-the-mind/archive/1.0.0.zip",
+	"download": "https://github.com/ironmonk88/monks-theater-of-the-mind/archive/1.0.1.zip",
 	"manifest": "https://github.com/ironmonk88/monks-theater-of-the-mind/releases/latest/download/module.json",
 	"bugs": "https://github.com/ironmonk88/monks-theater-of-the-mind/issues",
 	"allowBugReporter": true

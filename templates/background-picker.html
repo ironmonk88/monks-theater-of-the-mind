@@ -1,0 +1,11 @@
+<form>
+    <div class="background-list">
+        {{#each scenes}}
+        <div class="scene{{#if this.selected}} selected{{/if}}" data-id="{{this.id}}" testing="{{../sceneid}}">
+            <div class="background" style="background-image:url('{{this.background}}')"></div>
+            <div class="foreground" style="background-image:url('{{this.foreground}}')"></div>
+            <div class="scene-name">{{this.name}}</div>
+        </div>
+        {{/each}}
+    </div>
+</form>

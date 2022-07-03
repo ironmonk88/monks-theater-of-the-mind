@@ -1,4 +1,6 @@
 {
   "MonksTheaterOfTheMind.blur-hidden.name": "Blur Hidden",
-  "MonksTheaterOfTheMind.blur-hidden.hint": "Heavily blur hidden characters"
+  "MonksTheaterOfTheMind.blur-hidden.hint": "Heavily blur hidden characters",
+  "MonksTheaterOfTheMind.show-names.name": "Show names",
+  "MonksTheaterOfTheMind.show-names.hint": "Show the current characters name"
 }

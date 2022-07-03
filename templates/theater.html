@@ -1,16 +1,19 @@
-<div id="theater-container" style="background-image:url('{{background}}')">
-    <div class="settings"><a><i class="fas fa-cog"></i></a></div>
-    {{#if prev}}<div class="player prev{{#if prev.defeated}} defeated{{/if}}{{#if prev.hidden}} hidden{{/if}}{{#if prev.owner}} owner{{/if}}" actor-id="{{prev.id}}" style="background-image:url('{{prev.img}}')"></div>{{/if}}
-    {{#if current}}<div class="player current{{#if current.defeated}} defeated{{/if}}{{#if current.hidden}} hidden{{/if}}{{#if current.owner}} owner{{/if}}" actor-id="{{current.id}}" style="background-image:url('{{current.img}}')"></div>{{/if}}
-    {{#if next}}<div class="player next{{#if next.defeated}} defeated{{/if}}{{#if next.hidden}} hidden{{/if}}{{#if next.owner}} owner{{/if}}" actor-id="{{next.id}}" style="background-image:url('{{next.img}}')"></div>{{/if}}
-    <div class="theater-foreground" style="background-image:url('{{foreground}}')"></div>
+<div id="theater-container" style="background-image:url('{{scene.background}}')">
+    {{#if isGM}}<div class="settings"><a><i class="fas fa-cog"></i></a></div>{{/if}}
+    {{#if prev}}<div class="player prev{{#if prev.defeated}} defeated{{/if}}{{#if prev.hidden}} hidden{{/if}}{{#if prev.owner}} owner{{/if}}" data-actor-id="{{prev.id}}" actor-name="{{prev.name}}" style="background-image:url('{{prev.img}}')"></div>{{/if}}
+    {{#if current}}<div class="player current{{#if current.defeated}} defeated{{/if}}{{#if current.hidden}} hidden{{/if}}{{#if current.owner}} owner{{/if}}" data-actor-id="{{current.id}}" actor-name="{{current.name}}" style="background-image:url('{{current.img}}')"></div>{{/if}}
+    {{#if next}}<div class="player next{{#if next.defeated}} defeated{{/if}}{{#if next.hidden}} hidden{{/if}}{{#if next.owner}} owner{{/if}}" data-actor-id="{{next.id}}" actor-name="{{next.name}}" style="background-image:url('{{next.img}}')"></div>{{/if}}
+    <div class="theater-foreground" style="background-image:url('{{scene.foreground}}')"></div>
+    <div class="combat-name">
+        <div class="actor-name{{#if current.hidden}} hidden{{/if}}{{#if current.owner}} owner{{/if}}">{{current.name}}</div>
+    </div>
     <div class="combat-ctrls flexrow">
         {{#if isGM}}
         <a class="prev-turn combat-control" data-control="previousTurn" style=" flex-grow: 0; padding-left: 10px;"><i class="fas fa-arrow-left"></i></a>
         <a class="end-combat" data-control="endCombat">End Combat</a>
         <a class="next-turn combat-control" data-control="nextTurn" style=" flex-grow: 0; padding-right: 10px;"><i class="fas fa-arrow-right"></i></a>
         {{else}}
-            <a class="end-turn" style="{{#unless current.owner}}display: none;{{/unless}}">End Turn</a>
+        <a class="end-turn combat-control" data-control="nextTurn" style="{{#unless current.owner}}display: none;{{/unless}}">End Turn</a>
         {{/if}}
     </div>
 </div>

@@ -1,4 +1,5 @@
 import { MonksTheaterOfTheMind, log, setting, i18n } from '../monks-theater-of-the-mind.js';
+import { BackgroundPicker } from './background-picker.js';
 
 export class TheaterOfTheMind extends Application {
     constructor(object, options = {}) {
@@ -12,7 +13,8 @@ export class TheaterOfTheMind extends Application {
     static get defaultOptions() {
         let classes = [
             setting("blur-hidden") ? null : "hide-hidden",
-            game.user.isGM ? 'gm' : null
+            game.user.isGM ? 'gm' : null,
+            setting("show-names") ? "show-names" : null,
         ];
         return mergeObject(super.defaultOptions, {
             id: "theater-of-the-mind",
@@ -35,10 +37,12 @@ export class TheaterOfTheMind extends Application {
 
         data.isGM = game.user.isGM;
 
-        let img = "autumn";
+        let sceneId = this.combat.getFlag("monks-theater-of-the-mind", "scene");
+        data.scene = MonksTheaterOfTheMind.scenes.find(s => s.id == sceneId || (sceneId == undefined && s.default));
 
-        data.background = `./modules/monks-theater-of-the-mind/img/${img}.png`;
-        data.foreground = `./modules/monks-theater-of-the-mind/img/${img}-foreground.png`;
+        if (!data.scene) {
+            data.scene = MonksTheaterOfTheMind.scenes.find(s => s.default) || MonksTheaterOfTheMind.scenes[0];
+        }
 
         this.prev = this.getPrevCombatant(this.combat);
         data.prev = this.getCombatantData(this.prev);
@@ -48,6 +52,11 @@ export class TheaterOfTheMind extends Application {
         data.next = this.getCombatantData(this.next);
 
         return data;
+    }
+
+    async close(options = {}) {
+        delete this.combat._theater;
+        return super.close(options);
     }
 
     getCombatantData(combatant) {
@@ -70,7 +79,7 @@ export class TheaterOfTheMind extends Application {
 
         $('[data-control]', this.element).on('click', this._onCombatControl.bind(this));
 
-        $('.end-turn', this.element).on('click', this.endTurn.bind(this));
+        $('.settings', this.element).on('click', this.openSettings.bind(this));
     }
 
     getPrevCombatant(combat) {
@@ -138,6 +147,9 @@ export class TheaterOfTheMind extends Application {
             this.prev = prev;
             this.current = current;
             this.next = next;
+
+            if (game.user.isGM)
+                this.current.token?._object?.control({ releaseOthers: true });
         }
 
         $('.end-turn', this.element).toggle(current.isOwner);
@@ -161,17 +173,7 @@ export class TheaterOfTheMind extends Application {
         }
         if (this.current?.id != prev?.id && this.prev?.id != prev?.id && prev) {
             // new previous
-            let newPrev = $('<div>')
-                .addClass("player prev out")
-                .toggleClass('defeated', prev.data.defeated)
-                .toggleClass('hidden', prev.data.hidden)
-                .toggleClass('owner', prev.isOwner)
-                .attr('data-actor-id', prev.id)
-                .css('background-image', `url(${prev.token.actor.img})`)
-                .on('dblclick', this.openActor.bind(prev))
-                .appendTo($('#theater-container'));
-
-            window.setTimeout(() => { newPrev.removeClass('out') }, 100);
+            this.addCombatant.call(this, prev, "prev");
         }
 
         if (this.next?.id == current?.id) {
@@ -185,17 +187,7 @@ export class TheaterOfTheMind extends Application {
         }
         if (this.current?.id != next?.id && this.next?.id != next?.id && next) {
             // new next
-            let newNext = $('<div>')
-                .addClass("player next out")
-                .toggleClass('defeated', next.data.defeated)
-                .toggleClass('hidden', next.data.hidden)
-                .toggleClass('owner', next.isOwner)
-                .attr('data-actor-id', next.id)
-                .css('background-image', `url(${next.token.actor.img})`)
-                .on('dblclick', this.openActor.bind(next))
-                .appendTo($('#theater-container'));
-
-            window.setTimeout(() => { newNext.removeClass('out') }, 100);
+            this.addCombatant.call(this, next, "next");
         }
 
         if (this.current?.id == prev?.id) {
@@ -212,18 +204,32 @@ export class TheaterOfTheMind extends Application {
         }
 
         if (current?.id !== this.prev?.id && current?.id !== this.next?.id && this.current?.id !== current?.id && current) {
-            let newCurrent = $('<div>')
-                .addClass("player current out")
-                .toggleClass('defeated', current.data.defeated)
-                .toggleClass('hidden', current.data.hidden)
-                .toggleClass('owner', current.isOwner)
-                .attr('data-actor-id', current.id)
-                .css('background-image', `url(${current.token.actor.img})`)
-                .on('dblclick', this.openActor.bind(current))
-                .appendTo($('#theater-container'));
-
-            window.setTimeout(() => { newCurrent.removeClass('out') }, 100);
+            this.addCombatant.call(this, current, "current");
         }
+
+        if (this.current?.id !== current?.id && current) {
+            $('.combat-name .actor-name', this.element).addClass('out').on('transitionend webkitTransitionEnd oTransitionEnd', function () {
+                $(this).remove();
+            });
+
+            let newName = $("<div>").addClass('actor-name in').toggleClass('hidden', current.data.hidden).toggleClass('owner', current.isOwner).html(current.name).appendTo($('.combat-name', this.element));
+            window.setTimeout(() => { newName.removeClass('in') }, 100);
+        }
+    }
+
+    addCombatant(combatant, cls) {
+        let newCombatant = $('<div>')
+            .addClass(`player ${cls} out`)
+            .toggleClass('defeated', combatant.data.defeated)
+            .toggleClass('hidden', combatant.data.hidden)
+            .toggleClass('owner', combatant.isOwner)
+            .attr('data-actor-id', combatant.id)
+            .attr('actor-name', combatant.name)
+            .css('background-image', `url(${combatant.token.actor.img})`)
+            .on('dblclick', this.openActor.bind(combatant))
+            .appendTo($('#theater-container'));
+
+        window.setTimeout(() => { newCombatant.removeClass('out') }, 100);
     }
 
     updateCombatant(combatant, defeated) {
@@ -258,7 +264,7 @@ export class TheaterOfTheMind extends Application {
         combatant?.token.actor.sheet.render(true);
     }
 
-    endTurn() {
-
+    openSettings() {
+        new BackgroundPicker(this.combat).render(true);
     }
 }
