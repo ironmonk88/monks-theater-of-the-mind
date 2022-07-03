@@ -23,7 +23,7 @@ export let i18n = key => {
     return game.i18n.localize(key);
 };
 export let setting = key => {
-    return game.settings.get("monks-little-details", key);
+    return game.settings.get("monks-theater-of-the-mind", key);
 };
 
 export class MonksTheaterOfTheMind {

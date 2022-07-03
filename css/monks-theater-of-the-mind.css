@@ -62,6 +62,19 @@
     filter: grayscale(100%) blur(50px);
 }
 
+#theater-of-the-mind.hide-hidden #theater-container .player.hidden {
+    opacity: 0;
+}
+
+#theater-of-the-mind #theater-container .player.owner.hidden {
+    opacity: 0.5;
+    filter: blur(1px);
+}
+
+#theater-of-the-mind #theater-container .player.owner.hidden.defeated {
+    filter: grayscale(100%) blur(1px);
+}
+
 #theater-container .player.out {
     opacity: 0;
 }
@@ -118,10 +131,10 @@
     border-radius: 4px;
     border: 1px solid #222;
     color: var(--color-text-light-highlight);
-    width: 200px;
+    width: 250px;
     position: absolute;
     left: 50%;
-    margin-left: -100px;
+    margin-left: -125px;
 }
 
 #theater-container .combat-ctrls .end-combat {

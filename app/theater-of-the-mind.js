@@ -10,10 +10,15 @@ export class TheaterOfTheMind extends Application {
 
     /** @override */
     static get defaultOptions() {
+        let classes = [
+            setting("blur-hidden") ? null : "hide-hidden",
+            game.user.isGM ? 'gm' : null
+        ];
         return mergeObject(super.defaultOptions, {
             id: "theater-of-the-mind",
             title: "Theater of the Mind",
             template: "modules/monks-theater-of-the-mind/templates/theater.html",
+            classes: classes.filter(c => !!c),
             popOut: true,
             width: 1025,
             height: 700,
@@ -27,6 +32,8 @@ export class TheaterOfTheMind extends Application {
 
     getData(options) {
         let data = super.getData(options);
+
+        data.isGM = game.user.isGM;
 
         let img = "autumn";
 
@@ -48,8 +55,9 @@ export class TheaterOfTheMind extends Application {
             id: combatant?.id,
             name: combatant?.name,
             img: combatant?.token.actor.img,
-            visible: combatant?.visible,
-            defeated: this.combatant?.isDefeated
+            hidden: combatant?.data.hidden,
+            defeated: this.combatant?.isDefeated,
+            owner: combatant?.isOwner
         };
     }
 
@@ -61,6 +69,8 @@ export class TheaterOfTheMind extends Application {
         $('.next', this.element).on('dblclick', this.openActor.bind(this, this.next));
 
         $('[data-control]', this.element).on('click', this._onCombatControl.bind(this));
+
+        $('.end-turn', this.element).on('click', this.endTurn.bind(this));
     }
 
     getPrevCombatant(combat) {
@@ -129,6 +139,8 @@ export class TheaterOfTheMind extends Application {
             this.current = current;
             this.next = next;
         }
+
+        $('.end-turn', this.element).toggle(current.isOwner);
     }
 
     changeCombatants(prev, current, next) {
@@ -153,6 +165,7 @@ export class TheaterOfTheMind extends Application {
                 .addClass("player prev out")
                 .toggleClass('defeated', prev.data.defeated)
                 .toggleClass('hidden', prev.data.hidden)
+                .toggleClass('owner', prev.isOwner)
                 .attr('data-actor-id', prev.id)
                 .css('background-image', `url(${prev.token.actor.img})`)
                 .on('dblclick', this.openActor.bind(prev))
@@ -176,6 +189,7 @@ export class TheaterOfTheMind extends Application {
                 .addClass("player next out")
                 .toggleClass('defeated', next.data.defeated)
                 .toggleClass('hidden', next.data.hidden)
+                .toggleClass('owner', next.isOwner)
                 .attr('data-actor-id', next.id)
                 .css('background-image', `url(${next.token.actor.img})`)
                 .on('dblclick', this.openActor.bind(next))
@@ -202,6 +216,7 @@ export class TheaterOfTheMind extends Application {
                 .addClass("player current out")
                 .toggleClass('defeated', current.data.defeated)
                 .toggleClass('hidden', current.data.hidden)
+                .toggleClass('owner', current.isOwner)
                 .attr('data-actor-id', current.id)
                 .css('background-image', `url(${current.token.actor.img})`)
                 .on('dblclick', this.openActor.bind(current))
@@ -241,5 +256,9 @@ export class TheaterOfTheMind extends Application {
 
     openActor(combatant) {
         combatant?.token.actor.sheet.render(true);
+    }
+
+    endTurn() {
+
     }
 }

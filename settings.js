@@ -6,5 +6,15 @@ export const registerSettings = function () {
 
 	const debouncedReload = foundry.utils.debounce(function () { window.location.reload(); }, 100);
 	
-	
+	game.settings.register(modulename, "blur-hidden", {
+		name: i18n("MonksTheaterOfTheMind.blur-hidden.name"),
+		hint: i18n("MonksTheaterOfTheMind.blur-hidden.hint"),
+		scope: "world",
+		config: true,
+		default: true,
+		type: Boolean,
+		onChange: (value) => {
+			$('#theater-of-the-mind').toggleClass('hide-hidden', !value);
+        }
+	});
 };
