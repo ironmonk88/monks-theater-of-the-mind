@@ -1,0 +1,37 @@
+<form>
+    <div class="form-group">
+        <label for="background">Image Name</label>
+        <div class="form-fields">
+            <input type="hidden" name="id" value="{{object.id}}" />
+            <input type="text" name="name" value="{{object.name}}" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="background">Default</label>
+        <div class="form-fields">
+            <input type="checkbox" name="default" {{ checked object.default }} />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="background">Foreground</label>
+        <div class="form-fields">
+            {{ filePicker type="image" target="foreground" }}
+            <input class="image image-foreground" type="text" name="foreground" placeholder="path/image.png" value="{{object.foreground}}" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="background">Background</label>
+        <div class="form-fields">
+            {{ filePicker type="image" target="background" }}
+            <input class="image image-background" type="text" name="background" placeholder="path/image.png" value="{{object.background}}" />
+        </div>
+    </div>
+    <footer class="sheet-footer flexrow">
+        <button type="submit" name="submit">
+            <i class="far fa-save"></i> Save Changes
+        </button>
+        <button type="button" name="cancel">
+            Cancel
+        </button>
+    </footer>
+</form>

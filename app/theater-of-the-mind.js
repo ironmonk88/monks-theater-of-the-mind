@@ -15,10 +15,11 @@ export class TheaterOfTheMind extends Application {
             setting("blur-hidden") ? null : "hide-hidden",
             game.user.isGM ? 'gm' : null,
             setting("show-names") ? "show-names" : null,
+            setting("show-list") ? "show-list" : null,
         ];
         return mergeObject(super.defaultOptions, {
             id: "theater-of-the-mind",
-            title: "Theater of the Mind",
+            title: i18n("MonksTheaterOfTheMind.TheaterOfTheMind"),
             template: "modules/monks-theater-of-the-mind/templates/theater.html",
             classes: classes.filter(c => !!c),
             popOut: true,
@@ -51,6 +52,8 @@ export class TheaterOfTheMind extends Application {
         this.next = this.getNextCombatant(this.combat);
         data.next = this.getCombatantData(this.next);
 
+        data.combatants = this.combatants();
+
         return data;
     }
 
@@ -68,6 +71,26 @@ export class TheaterOfTheMind extends Application {
             defeated: this.combatant?.isDefeated,
             owner: combatant?.isOwner
         };
+    }
+
+    combatants() {
+        return this.combat.turns.map((c, index) => {
+            let css = [
+                index === this.combat.turn ? "active" : "",
+                c.hidden ? "hidden" : "",
+                c.data.defeated ? "defeated" : ""
+            ].join(" ").trim();
+            return {
+                id: c.id,
+                name: c.name,
+                img: c.img,
+                active: index === this.combat.turn,
+                owner: c.isOwner,
+                defeated: c.data.defeated,
+                hidden: c.hidden,
+                css: css
+            }
+        })
     }
 
     activateListeners(html) {
@@ -151,6 +174,9 @@ export class TheaterOfTheMind extends Application {
             if (game.user.isGM)
                 this.current.token?._object?.control({ releaseOthers: true });
         }
+
+        $('.combatant-container.active', this.element).removeClass("active");
+        $(`.combatant-container[data-id="${current.id}"]`, this.element).addClass("active");
 
         $('.end-turn', this.element).toggle(current.isOwner);
     }
@@ -242,8 +268,6 @@ export class TheaterOfTheMind extends Application {
         if (this.next?.id == combatant.id) {
             $('.next', this.element).toggleClass('defeated', combatant.data.defeated).toggleClass('hidden', combatant.data.hidden);
         }
-
-        //+++ update the carosel
 
         if (defeated && this.combat.settings.skipDefeated) {
             this.checkCombatantChange();

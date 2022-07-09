@@ -1,0 +1,39 @@
+<form>
+    <ol class="items-list image-items">
+        <li class="items-header flexrow">
+            <h3 class="item-name flexrow" sort="name">Name</h3>
+            <div class="item-controls item-foreground">Foreground</div>
+            <div class="item-controls item-background">Background</div>
+            <div class="item-controls flexrow owner-only">
+                <a class="item-control item-add" title="Create New Background">
+                    <i class="fas fa-plus"></i> Add
+                </a>
+            </div>
+        </li>
+
+        <ol class="items-list">
+            <ul class="item-list">
+                {{#each images}}
+                <li class="item flexrow{{#if this.default}} default{{/if}}" data-id="{{this.id}}" draggable="false">
+                    <div class="item-name flexrow">
+                        <h4>{{this.name}}{{#if this.default}} <i class="fas fa-check" title="default background"></i>{{/if}}</h4>
+                    </div>
+
+                    <div class="item-foreground">
+                        <img class="item-image" src="{{this.foreground}}" />
+                    </div>
+
+                    <div class="item-background">
+                        <img class="item-image" src="{{this.background}}" />
+                    </div>
+
+                    <div class="item-controls flexrow owner-only">
+                        <a class="item-control item-edit" title="Edit Image"><i class="fas fa-edit"></i></a>
+                        <a class="item-control item-delete" title="Delete Image"><i class="fas fa-trash"></i></a>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        </ol>
+    </ol>
+</form>

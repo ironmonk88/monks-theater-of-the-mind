@@ -2,5 +2,13 @@
   "MonksTheaterOfTheMind.blur-hidden.name": "Blur Hidden",
   "MonksTheaterOfTheMind.blur-hidden.hint": "Heavily blur hidden characters",
   "MonksTheaterOfTheMind.show-names.name": "Show names",
-  "MonksTheaterOfTheMind.show-names.hint": "Show the current characters name"
+  "MonksTheaterOfTheMind.show-names.hint": "Show the current characters name",
+  "MonksTheaterOfTheMind.editbackground.name": "Edit Background List",
+  "MonksTheaterOfTheMind.editbackground.hint": "Edit the list of backgrounds so you can add custom ones.",
+  "MonksTheaterOfTheMind.show-list.name": "Show combatant list",
+  "MonksTheaterOfTheMind.show-list.hint": "Show list of combatants across the top of the window",
+
+  "MonksTheaterOfTheMind.TheaterOfTheMind": "Theater of the Mind",
+  "MonksTheaterOfTheMind.EditImages": "Edit Images",
+  "MonksTheaterOfTheMind.ImageList": "Image List"
 }

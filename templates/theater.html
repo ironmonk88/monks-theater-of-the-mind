@@ -1,4 +1,14 @@
 <div id="theater-container" style="background-image:url('{{scene.background}}')">
+    <div class="combat-list flexcol">
+        {{#each combatants}}
+        <div class="combatant-container {{this.css}}" data-id="{{this.id}}">
+            <div class="combatant">
+                <div class="name">{{this.name}}</div>
+                <div class="image" style="background-image:url('{{this.img}}')"></div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
     {{#if isGM}}<div class="settings"><a><i class="fas fa-cog"></i></a></div>{{/if}}
     {{#if prev}}<div class="player prev{{#if prev.defeated}} defeated{{/if}}{{#if prev.hidden}} hidden{{/if}}{{#if prev.owner}} owner{{/if}}" data-actor-id="{{prev.id}}" actor-name="{{prev.name}}" style="background-image:url('{{prev.img}}')"></div>{{/if}}
     {{#if current}}<div class="player current{{#if current.defeated}} defeated{{/if}}{{#if current.hidden}} hidden{{/if}}{{#if current.owner}} owner{{/if}}" data-actor-id="{{current.id}}" actor-name="{{current.name}}" style="background-image:url('{{current.img}}')"></div>{{/if}}

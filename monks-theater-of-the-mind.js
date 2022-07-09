@@ -27,6 +27,16 @@ export let setting = key => {
     return game.settings.get("monks-theater-of-the-mind", key);
 };
 
+export let makeid = () => {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < 16; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 export class MonksTheaterOfTheMind {
     static init() {
         if (game.MonksTheaterOfTheMind == undefined)
@@ -55,6 +65,12 @@ export class MonksTheaterOfTheMind {
         
     }
 
+    static get scenes() {
+        let images = game.settings.get('monks-theater-of-the-mind', 'images') || [];
+        images = images instanceof Array ? images : [];
+        return images;
+    }
+
     static emit(action, args = {}) {
         args.action = action;
         args.senderId = game.user.id;
@@ -71,20 +87,6 @@ export class MonksTheaterOfTheMind {
         else
             new TheaterOfTheMind(combat).render(true);
     }
-
-    static get scenes() {
-        return [
-            { id: 'alley', name: 'Alley', foreground: './modules/monks-theater-of-the-mind/img/alley-foreground.png', background: './modules/monks-theater-of-the-mind/img/alley.png' },
-            { id: 'autumn', name: 'Autumn', foreground: './modules/monks-theater-of-the-mind/img/autumn-foreground.png', background: './modules/monks-theater-of-the-mind/img/autumn.png' },
-            { id: 'cavern', name: 'Cavern', foreground: './modules/monks-theater-of-the-mind/img/cavern-foreground.png', background: './modules/monks-theater-of-the-mind/img/cavern.png' },
-            { id: 'desert', name: 'Desert', foreground: './modules/monks-theater-of-the-mind/img/desert-foreground.png', background: './modules/monks-theater-of-the-mind/img/desert.png' },
-            { id: 'forest', name: 'Forest', foreground: './modules/monks-theater-of-the-mind/img/forest-foreground.png', background: './modules/monks-theater-of-the-mind/img/forest.png' },
-            { id: 'meadow', name: 'Meadow', foreground: './modules/monks-theater-of-the-mind/img/meadow-foreground.png', background: './modules/monks-theater-of-the-mind/img/meadow.png', 'default': true },
-            { id: 'snow', name: 'Snow', foreground: './modules/monks-theater-of-the-mind/img/snow-foreground.png', background: './modules/monks-theater-of-the-mind/img/snow.png' },
-            { id: 'town', name: 'Town', foreground: './modules/monks-theater-of-the-mind/img/town-foreground.png', background: './modules/monks-theater-of-the-mind/img/town.png' },
-            { id: 'yard', name: 'Yard', foreground: './modules/monks-theater-of-the-mind/img/yard-foreground.png', background: './modules/monks-theater-of-the-mind/img/yard.png' }
-        ]
-    };
 }
 
 Hooks.once('init', MonksTheaterOfTheMind.init);
@@ -98,23 +100,36 @@ Hooks.on('renderCombatTracker', async (app, html, data) => {
             .attr("title", "Open this combat in theater of the mind")
             .html("Theater of the Mind")
             .on("click", () => {
-                let selected = app.viewed.getFlag("monks-theater-of-the-mind", "use-theater");
-                app.viewed.setFlag("monks-theater-of-the-mind", "use-theater", !selected);
-                //$('#theater-controls').toggleClass('selected', !selected);
+                let selected = !app.viewed.getFlag("monks-theater-of-the-mind", "use-theater");
+                app.viewed.setFlag("monks-theater-of-the-mind", "use-theater", selected);
+                if (selected && !app.viewed.started)
+                    app.viewed.startCombat();
+                else if (selected && app.viewed.started && !app.viewed._theater)
+                    game.MonksTheaterOfTheMind.openTheater(app.viewed);
+                else if (!selected && app.viewed._theater)
+                    app.viewed._theater.close();
             });
         let settings = $('<a>')
-            .addClass("theater-settings")
+            .addClass("theater-settings theater-button")
             .html('<i class="fas fa-cog"></i>')
             .on("click", () => {
                 new BackgroundPicker(app.viewed).render(true);
-            })
+            });
+        let view = $('<a>')
+            .addClass("view-theater theater-button")
+            .toggle(app.viewed?.started)
+            .html('<i class="fas fa-eye"></i>')
+            .on("click", () => {
+                MonksTheaterOfTheMind.openTheater(app.viewed);
+            });
         $('<nav>')
             .toggleClass('selected', !!app?.viewed?.getFlag("monks-theater-of-the-mind", "use-theater"))
             .toggle(!!data.combat)
             .attr("id", "theater-controls")
+            .append(view)
             .append(link)
             .append(settings)
-            .insertAfter($('#combat-round', html));
+            .insertBefore($('#combat-controls', html));
     }
 });
 
